@@ -1,7 +1,17 @@
-from fnx import Format_report as fr
+
 import numpy as np
 import matplotlib.pyplot as plt
 
+class Format_report:
+    def __init__(self, X, pred, Y=None) -> None:
+        if Y is not None:
+            for x, y, p, approx_p in zip(X, Y, pred, pred.round(3)):
+                print(f'\033[1;48;5;247m{x}\033[0m: Expected = \033[1;48;5;240m{y}\033[0m, Prediction = {p} ~ \033[1;48;5;249m{approx_p}\033[0m.')
+        else:
+            for x, p, approx_p in zip(X, pred, pred.round(3)):
+                print(f'\033[48;5;247m{x}\033[0m: Prediction = \033[48;5;240m{p}\033[0m ~ \033[48;5;250m{pred.round()}\033[0m.')
+        print()
+        
 def analyze_predictions(inputs, actual_output, o1, o2):
     """
     Analyzes and visualizes the changes in predictions made by an ANN.
@@ -49,12 +59,9 @@ def generate_dataset(fnx= f, no_data_set=None):
     return (_x, _y)
 
 X, Y = generate_dataset(no_data_set=100)
-
-# print(X,Y)
 class Neuron:
-    def __init__(self, n_inputs) -> None:
-        self.n_inputs = n_inputs
-        self.weight = np.random.randn(1 , n_inputs)
+    def __init__(self) -> None:
+        self.weight = np.random.randn(1 , 1)
         self.bias = np.zeros((1, 1))
 
     def predict(self, inputs):
@@ -100,11 +107,9 @@ class Neuron:
                 print("Invalid input. Please enter an integer.")
                     
         output = self.predict(np.array([user_inputs]))
-        fr(X=[user_inputs], pred=output)
+        Format_report(X=user_inputs, pred=output)
 
-
-
-n = Neuron(X[0].__len__())
+n = Neuron()
 
 o1 = n.predict(X)
 n.train(x=X, y=Y, epochs=5000, learning_rate=1e-1)
